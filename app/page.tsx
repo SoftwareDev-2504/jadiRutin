@@ -1,29 +1,325 @@
-'use client';
-import {useState} from 'react';
-import {ArrowUpRight, ArrowRight, Check, ChevronDown, Sparkles, Wallet, CalendarDays, Heart, ShieldCheck, Infinity as InfinityIcon, Menu, X, Leaf} from 'lucide-react';
-const cdn='https://cdn.lynkid.my.id/products/';
-const token='cGFyYW1zPSU1QiU1RCZ0aWNrZXRzPSU1QiU1RCZiaWRfcHJpY2U9MCZxdHlfcHJvZD0xJnNlc3NpZD0mdG90YWxfcHJpY2U9JnRvdGFsX3VuaXQ9';
-type Variant={color:string; id:string; image:string; old?:number};
-type Product={name:string;category:string;tag:string;description:string;price:number;variants:Variant[]};
-const products:Product[]=[
-{name:'Money Planner',category:'Keuangan',tag:'SEMUA KEUANGAN, SATU TEMPAT',description:'Atur budget, catat pengeluaran, dan pantau banyak kantong uang dengan lebih terarah.',price:24500,variants:[{color:'Pink',id:'j5og55mzg0jq',image:'01-08-2026/1785581772854_1338114.png',old:65000},{color:'Blue',id:'y24myzxdz24q',image:'04-08-2026/1785831588858_4199988.png'}]},
-{name:'Habit Tracker',category:'Kebiasaan',tag:'YOUR LITTLE GLOW-UP SYSTEM',description:'Bangun kebiasaan baik dan lihat progres kecilmu, satu hari demi satu hari.',price:15500,variants:[{color:'Pink',id:'le64907dp61q',image:'21-02-2026/1771683407269_9959982.png',old:33000},{color:'Blue',id:'rqknw6dxwq27',image:'01-02-2026/1769960778220_7939807.png'},{color:'Green',id:'oo5n65g3v2xx',image:'12-01-2026/1768218366926_7160284.png'}]},
-{name:'Smart Monthly Planner',category:'Produktivitas',tag:'RUANG UNTUK SEMUA RENCANAMU',description:'Rapikan agenda bulanan supaya hal penting dan waktu untuk diri sendiri tetap punya tempat.',price:18500,variants:[{color:'Pink',id:'o6m64q693j62',image:'06-03-2026/1772792921622_6324673.png',old:35000},{color:'Blue',id:'7d37njnmm99m',image:'21-01-2026/1768986895482_6423578.png',old:45000},{color:'Green',id:'z6or2q4vxprm',image:'09-02-2026/1770651323786_5459126.webp',old:35000}]},
-{name:'Saving Tracker',category:'Keuangan',tag:'WISHLIST JADI LEBIH DEKAT',description:'Catat perjalanan menabung bareng pasangan untuk mimpi yang ingin kalian wujudkan.',price:17500,variants:[{color:'Pink',id:'pe7wpl4qyze9',image:'01-09-2026/1788262138161_1567060.png',old:35000},{color:'Blue',id:'xy4ko1nx4kp2',image:'19-09-2026/1789781682110_5175819.png'}]},
-{name:'Financial Tracker',category:'Keuangan',tag:'KENALI KE MANA UANGMU PERGI',description:'Mulai kebiasaan mencatat keuangan dan bantu dirimu lebih sadar saat belanja.',price:17500,variants:[{color:'Pink',id:'6z9r8w976dzp',image:'25-06-2026/1782405100050_1481658.png',old:35000},{color:'Blue',id:'qg109kgdy4mv',image:'01-07-2026/1782877056408_2836444.png',old:35000}]},
-{name:'21 Days Challenge',category:'Kebiasaan',tag:'MULAI DARI SATU KEBIASAAN',description:'Beri dirimu tantangan 21 hari untuk mulai membangun rutinitas yang lebih positif.',price:9900,variants:[{color:'Blue',id:'menmvn63ngqm',image:'01-05-2026/1777629361803_3437997.png',old:20000},{color:'Pink',id:'19jn0zk0gjy5',image:'26-04-2026/1777201168701_3907427.png',old:20000}]}
+import {
+  ArrowRight,
+  ArrowUpRight,
+  ChartPie,
+  Check,
+  ChevronDown,
+  FileSpreadsheet,
+  Infinity as InfinityIcon,
+  Lock,
+  Mail,
+  MessageCircle,
+  MonitorSmartphone,
+  MousePointerClick,
+  Palette,
+  RefreshCw,
+  ShieldCheck,
+} from 'lucide-react';
+import {Brand} from './components/Brand';
+import {Collection} from './components/Collection';
+import {Header} from './components/Header';
+import {CDN, STORE_URL, TIKTOK_URL, WHATSAPP_DISPLAY, WHATSAPP_URL, lowestPrice, products, rupiah, variantCount} from './data';
+
+const external = {target: '_blank', rel: 'noopener noreferrer'};
+
+const bySlug = (slug: string) => products.find((p) => p.slug === slug)!;
+
+const finder = [
+  {need: 'Gaji sering habis, tapi tidak tahu ke mana perginya.', slug: 'financial-tracker'},
+  {need: 'Ingin saldo rekening, e-wallet, dan cash tercatat rapi.', slug: 'money-planner'},
+  {need: 'Sedang menabung untuk menikah, liburan, atau dana darurat.', slug: 'saving-tracker'},
+  {need: 'Mau mulai kebiasaan baru, tapi sering berhenti di tengah jalan.', slug: '21-days-challenge'},
+  {need: 'Ingin memantau beberapa kebiasaan sekaligus.', slug: 'habit-tracker'},
+  {need: 'Agenda dan deadline sering terlewat.', slug: 'smart-monthly-planner'},
 ];
-const rupiah=(n:number)=>'Rp'+n.toLocaleString('id-ID');
-function ProductCard({product:p}:{product:Product}){const [selected,setSelected]=useState(0);const v=p.variants[selected];return <article className="product-card"><div className="product-image"><img src={cdn+v.image} alt={`${p.name} — ${v.color} Edition, tampilan produk asli JadiRutin`} loading="lazy"/><span className="category-label">{p.category}</span></div><div className="product-content"><p className="eyebrow">{p.tag}</p><h3>{p.name}</h3><p className="description">{p.description}</p><div className="variant-row"><div className="swatches" aria-label={`Warna ${p.name}`}>{p.variants.map((variant,i)=><button key={variant.id} aria-label={`${p.name} ${variant.color}`} aria-pressed={i===selected} onClick={()=>setSelected(i)} className={`swatch ${variant.color.toLowerCase()} ${selected===i?'selected':''}`}>{selected===i&&<Check size={13}/>}</button>)}</div><span>{v.color} Edition</span></div><div className="purchase-row"><div><span className="price">{rupiah(p.price)}</span>{v.old&&<del>{rupiah(v.old)}</del>}</div><a className="buy" href={`https://lynk.id/jadirutin/${v.id}/checkout?token=${token}`} target="_blank" rel="noopener noreferrer" aria-label={`Beli sekarang ${p.name} ${v.color} di Lynk`}>Beli sekarang <ArrowUpRight size={16}/></a></div></div></article>}
-export default function Home(){const [filter,setFilter]=useState('Semua planner');const [menu,setMenu]=useState(false);return <>
-<div className="announcement">Sedikit demi sedikit, jadi versi terbaikmu. <Sparkles size={13}/><span>Let’s grow together!</span></div>
-<header><a href="#" className="brand" aria-label="JadiRutin beranda"><span className="brand-mark"><Check size={24}/></span>jadi<span>rutin</span></a><nav aria-label="Navigasi utama" className={menu?'open':''}><a href="#koleksi" onClick={()=>setMenu(false)}>Koleksi planner</a><a href="#kenapa" onClick={()=>setMenu(false)}>Kenapa JadiRutin?</a><a href="#cara-beli" onClick={()=>setMenu(false)}>Cara beli</a><a href="#faq" onClick={()=>setMenu(false)}>FAQ</a></nav><a className="nav-cta" href="#koleksi">Temukan plannermu <ArrowUpRight size={17}/></a><button className="menu-toggle" onClick={()=>setMenu(!menu)} aria-expanded={menu} aria-label="Buka navigasi">{menu?<X/>:<Menu/>}</button></header>
-<main><section className="hero"><div className="hero-copy"><span className="pill"><span className="tiny-star">✦</span> A little structure. A lot of growth.</span><h1>Hidup lebih rapi.<br/>Mimpi lebih dekat.<br/><span>Mulai jadi rutin.</span></h1><p>Planner digital yang bantu kamu atur uang, bangun kebiasaan baik, dan punya waktu untuk hal yang berarti. Mulai dari langkah kecilmu hari ini.</p><div className="hero-actions"><a href="#koleksi" className="button primary">Cari planner yang cocok <ArrowUpRight size={20}/></a><span className="starting">Mulai dari <strong>Rp9.900</strong></span></div><div className="hero-note"><span className="note-icon"><Heart size={16}/></span><div><strong>Teman untuk perjalanan grow up kamu.</strong><br/><span>Sekali beli, pakai selamanya.</span></div></div></div><div className="hero-visual"><div className="visual-title"><span>THE JADIRUTIN COLLECTION</span><span>01 — 06</span></div><div className="featured-preview"><img src={cdn+products[0].variants[0].image} alt="Preview Money Planner JadiRutin" fetchPriority="high"/></div><div className="preview-small"><img src={cdn+products[1].variants[0].image} alt="Preview Habit Tracker pink"/></div><div className="visual-badge"><Sparkles size={19}/><span>Small steps,<br/><strong>big changes.</strong></span></div><div className="visual-caption"><span>Made for your everyday ✳</span><span>Digital planners, real progress.</span></div></div></section>
-<div className="benefit-strip"><span><InfinityIcon/>Sekali beli, pakai selamanya</span><span><Heart/>Mulai dari Rp9.900</span><span><ShieldCheck/>Checkout melalui Lynk</span><span><Leaf/>Tumbuh dengan ritmemu</span></div>
-<section className="collection section" id="koleksi"><div className="section-heading"><div><p className="eyebrow pink-text">A LITTLE HELP FOR YOUR EVERYDAY</p><h2>Rencana baik dimulai di sini<span>.</span></h2><p>Pilih teman kecil untuk perubahan besar yang kamu mau.</p></div><span className="collection-count">06 / KOLEKSI PLANNER</span></div><div className="filters" aria-label="Kategori planner">{['Semua planner','Keuangan','Kebiasaan','Produktivitas'].map((f,i)=><button key={f} onClick={()=>setFilter(f)} aria-pressed={filter===f} className={filter===f?'active':''}>{i===0?<Sparkles size={16}/>:i===1?<Wallet size={16}/>:i===2?<Heart size={16}/>:<CalendarDays size={16}/>} {f}{i===0&&<span>6</span>}</button>)}</div><div className="product-grid" aria-live="polite">{products.filter(p=>filter==='Semua planner'||p.category===filter).map(p=><ProductCard key={p.name} product={p}/>)}</div><p className="price-note">Harga dan ketersediaan mengikuti informasi terbaru saat checkout di Lynk.</p></section>
-<section className="why section" id="kenapa"><div className="why-intro"><p className="eyebrow pink-text">LESS OVERWHELM. MORE LITTLE WINS.</p><h2>Nggak harus sempurna.<br/>Cukup mulai, lalu rutin.</h2><p>Kamu nggak perlu mengubah semuanya dalam sehari. Pilih satu hal yang mau kamu rapikan, dan mulai dari sana.</p><a href="#koleksi">Yuk, ambil langkah pertama <ArrowRight size={18}/></a></div><div className="why-items"><div><span className="feature-icon"><Wallet/></span><div><h3>Bikin uangmu lebih terarah</h3><p>Dari mencatat pengeluaran sampai menabung untuk wishlist, pilih planner sesuai kebutuhanmu.</p></div></div><div><span className="feature-icon"><Heart/></span><div><h3>Rayakan progres kecilmu</h3><p>Bangun kebiasaan positif dengan melihat apa yang sudah kamu lakukan, hari demi hari.</p></div></div><div><span className="feature-icon"><CalendarDays/></span><div><h3>Kasih ruang untuk yang penting</h3><p>Susun rencana bulanan supaya kegiatanmu lebih tertata dan nggak cuma numpuk di kepala.</p></div></div></div></section>
-<section className="how section" id="cara-beli"><p className="eyebrow pink-text">YOUR NEXT CHAPTER IS THREE STEPS AWAY</p><h2>Dari niat, jadi mulai.</h2><div className="steps"><article><span>01</span><h3>Temukan yang kamu butuhkan</h3><p>Pilih planner dan edisi warna yang paling bikin kamu semangat untuk mulai.</p></article><article><span>02</span><h3>Checkout lewat Lynk</h3><p>Klik “Beli sekarang”, cek pesananmu, lalu pilih metode pembayaran yang tersedia di Lynk.</p></article><article><span>03</span><h3>Mulai rutinitas barumu</h3><p>Ikuti petunjuk akses produk setelah pembayaran selesai. Luangkan waktu kecil untuk mulai.</p></article></div></section>
-<section className="faq section" id="faq"><div><p className="eyebrow pink-text">LET’S CLEAR THINGS UP</p><h2>Masih penasaran?</h2><p>Kami bantu kamu mulai dengan lebih yakin.</p><a href="https://wa.me/6287762339150" target="_blank" rel="noopener noreferrer">Tanya langsung ke Minja <ArrowUpRight size={17}/></a></div><div className="questions">{[['Ini produk fisik atau digital?','Semua produk di halaman ini adalah planner atau tracker digital. Tidak ada barang fisik yang dikirim. Lihat detail format dan kebutuhan aplikasi pada halaman produk di Lynk sebelum membeli.'],['Apakah plannernya bisa dipakai selamanya?','Bisa. Sesuai informasi JadiRutin, semua planner bisa dipakai selamanya setelah dibeli. Pilih produk yang sesuai dengan kebutuhanmu.'],['Bagaimana cara membeli dan mengakses produk?','Pilih produk dan warna, lalu klik Beli sekarang. Kamu akan diarahkan ke checkout Lynk. Isi email dengan benar dan ikuti petunjuk pembayaran serta akses produk yang diberikan Lynk.'],['Boleh dibagikan atau dijual lagi?','Template JadiRutin hanya untuk pemakaian pribadi. Produk tidak boleh dibagikan kepada orang lain atau dijual kembali.'],['Bisa pesan planner khusus?','Bisa konsultasi langsung dengan Minja melalui WhatsApp untuk kebutuhan planner khusus. Sampaikan rencana dan kebutuhanmu terlebih dahulu.']].map(([q,a])=><details key={q}><summary>{q}<ChevronDown size={19}/></summary><p>{a}</p></details>)}</div></section>
-<section className="closing"><span className="eyebrow">A FRESH START CAN BE TODAY</span><h2>Versi terbaikmu dimulai<br/>dari satu langkah kecil.</h2><a href="#koleksi" className="button primary">Mulai rutinitas baikku <ArrowUpRight size={19}/></a><p>Pelan-pelan juga tetap maju. Kita mulai, yuk?</p></section></main>
-<footer><div><a href="#" className="brand"><span className="brand-mark"><Check size={21}/></span>jadi<span>rutin</span></a><p>Langkah kecil. Rutinitas baik. Hidup yang lebih tertata.</p></div><div className="footer-links"><a href="https://www.tiktok.com/@jadirutin" target="_blank" rel="noopener noreferrer">TikTok <ArrowUpRight size={14}/></a><a href="https://wa.me/6287762339150" target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight size={14}/></a><a href="https://lynk.id/jadirutin" target="_blank" rel="noopener noreferrer">Toko Lynk <ArrowUpRight size={14}/></a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} JadiRutin.</span><span>Dibuat untuk tumbuh, satu hari pada satu waktu.</span></div></footer><a className="mobile-shop" href="#koleksi">Temukan plannermu <ArrowUpRight size={18}/></a>
-</>}
+
+const benefits = [
+  {icon: FileSpreadsheet, title: 'Google Sheets siap pakai', text: 'Tidak perlu software berbayar. Cukup akun Google, lalu buka lewat browser atau aplikasi Google Sheets.'},
+  {icon: ChartPie, title: 'Rumus & grafik otomatis', text: 'Kamu cukup mengisi data. Total, persentase progres, dan grafik terhitung sendiri.'},
+  {icon: RefreshCw, title: 'Sinkron di semua perangkat', text: 'Catat dari HP saat di jalan, lanjutkan di laptop. Perubahan langsung tersimpan di mana pun.'},
+  {icon: InfinityIcon, title: 'Sekali bayar, pakai selamanya', text: 'Tanpa biaya langganan bulanan. Setelah dibeli, template jadi milikmu untuk dipakai pribadi.'},
+  {icon: Palette, title: 'Desain lembut yang bikin betah', text: 'Tersedia edisi pink, biru, dan hijau. Rapi dibaca, nyaman dibuka setiap hari.'},
+  {icon: MessageCircle, title: 'Dibantu admin', text: 'Bingung memilih atau ada kendala saat akses? Tanyakan langsung ke admin kami lewat WhatsApp.'},
+];
+
+const steps = [
+  {icon: MousePointerClick, title: 'Pilih planner & warnanya', text: 'Temukan template yang sesuai kebutuhanmu, pilih edisi warna, lalu klik “Beli di Lynk”.'},
+  {icon: Lock, title: 'Bayar di checkout Lynk', text: 'Isi data pemesanan dengan email yang aktif, lalu selesaikan pembayaran dengan metode yang tersedia di Lynk.'},
+  {icon: Mail, title: 'Terima akses & mulai', text: 'Setelah pembayaran terkonfirmasi, akses template diberikan melalui Lynk. Buka di Google Sheets dan mulai isi.'},
+];
+
+const faqs = [
+  ['Produknya berbentuk apa?', 'Semua produk JadiRutin adalah template digital Google Sheets. Tidak ada barang fisik yang dikirim. Kamu mendapatkan akses ke file template setelah pembayaran berhasil.'],
+  ['Aplikasi apa yang dibutuhkan? Bisa dipakai di HP?', 'Cukup akun Google. Template bisa dibuka lewat browser di laptop, atau aplikasi Google Sheets (gratis) di HP dan tablet. Perubahan yang kamu buat langsung tersinkron di semua perangkat.'],
+  ['Apakah ada biaya langganan?', 'Tidak ada. Kamu cukup membayar sekali, lalu template bisa dipakai selamanya.'],
+  ['Saya belum pernah pakai spreadsheet. Bakal susah?', 'Tidak perlu jago Excel. Rumus dan grafiknya sudah disiapkan, jadi kamu cukup mengisi kolom yang tersedia. Kalau ada yang membingungkan, admin kami siap membantu lewat WhatsApp.'],
+  ['Apa bedanya Money Planner dan Financial Tracker?', 'Money Planner berfokus pada budgeting dan saldo di banyak kantong, misalnya rekening, e-wallet, dan cash. Financial Tracker berfokus pada pencatatan pemasukan dan pengeluaran per kategori, lengkap dengan grafik cash flow dan saving goals.'],
+  ['Bagaimana cara membeli dan menerima produk?', 'Pilih planner dan warnanya, lalu klik “Beli di Lynk”. Isi data pemesanan dengan email yang aktif dan selesaikan pembayaran di halaman checkout Lynk. Setelah pembayaran terkonfirmasi, akses produk diberikan melalui Lynk.'],
+  ['Pembayarannya diproses di mana?', 'Seluruh pembayaran diproses di halaman checkout Lynk, dengan metode pembayaran yang tersedia di sana. Website ini tidak menerima maupun menyimpan data pembayaranmu.'],
+  ['Boleh dibagikan atau dijual lagi?', 'Template JadiRutin berlisensi untuk pemakaian pribadi. Mohon tidak membagikan file kepada orang lain atau menjualnya kembali.'],
+  ['Bisa request planner custom?', 'Bisa. Ceritakan kebutuhanmu ke admin lewat WhatsApp, nanti kami diskusikan bersama.'],
+];
+
+export default function Home() {
+  const hero = products[0].variants[0];
+  const heroSecondary = products[1].variants[0];
+
+  return (
+    <>
+      <a href="#koleksi" className="skip-link">
+        Langsung ke koleksi
+      </a>
+      <div className="announcement" id="top">
+        <span>Template Google Sheets</span>
+        <span aria-hidden="true">·</span>
+        <span>Bisa di HP, tablet & laptop</span>
+        <span aria-hidden="true" className="hide-sm">·</span>
+        <span className="hide-sm">Sekali bayar, pakai selamanya</span>
+      </div>
+      <Header />
+
+      <main>
+        <section className="hero container">
+          <div className="hero-copy">
+            <p className="pill">
+              <span className="pill-dot" aria-hidden="true" /> Progress, not perfection.
+            </p>
+            <h1>
+              Keuangan rapi, kebiasaan terjaga, <span>hidup lebih tenang.</span>
+            </h1>
+            <p className="lead">
+              Template Google Sheets siap pakai untuk mencatat keuangan, membangun kebiasaan, dan menyusun rencana bulanan. Rumus dan grafiknya sudah jadi. Kamu cukup mengisi, sisanya otomatis.
+            </p>
+            <div className="hero-actions">
+              <a href="#koleksi" className="button button-primary button-lg">
+                Lihat koleksi planner <ArrowRight size={18} />
+              </a>
+              <a href={WHATSAPP_URL} {...external} className="button button-ghost button-lg">
+                <MessageCircle size={18} /> Tanya admin
+              </a>
+            </div>
+            <ul className="hero-checks">
+              <li>
+                <Check size={16} aria-hidden="true" /> Mulai {rupiah(lowestPrice)}
+              </li>
+              <li>
+                <Check size={16} aria-hidden="true" /> Tanpa biaya langganan
+              </li>
+              <li>
+                <Check size={16} aria-hidden="true" /> Checkout resmi via Lynk
+              </li>
+            </ul>
+          </div>
+
+          <div className="hero-visual" aria-hidden="true">
+            <div className="hero-frame hero-frame-main">
+              <img src={CDN + hero.image} alt="" fetchPriority="high" width={800} height={800} />
+            </div>
+            <div className="hero-frame hero-frame-small">
+              <img src={CDN + heroSecondary.image} alt="" width={800} height={800} />
+            </div>
+            <div className="float-chip chip-top">
+              <span className="float-icon sage">
+                <FileSpreadsheet size={18} />
+              </span>
+              <span>
+                <strong>Google Sheets</strong>
+                <small>Langsung pakai</small>
+              </span>
+            </div>
+            <div className="float-chip chip-bottom">
+              <span className="float-icon pink">
+                <ChartPie size={18} />
+              </span>
+              <span>
+                <strong>Grafik otomatis</strong>
+                <small>Cukup isi datanya</small>
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section className="highlights" aria-label="Keunggulan singkat">
+          <div className="container highlights-inner">
+            <div>
+              <strong>{products.length} planner</strong>
+              <span>keuangan, kebiasaan, agenda</span>
+            </div>
+            <div>
+              <strong>{variantCount} pilihan warna</strong>
+              <span>edisi pink, biru, dan hijau</span>
+            </div>
+            <div>
+              <strong>Semua perangkat</strong>
+              <span>HP, tablet, dan laptop</span>
+            </div>
+            <div>
+              <strong>Sekali bayar</strong>
+              <span>pakai selamanya</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="section container" aria-labelledby="finder-title">
+          <div className="section-heading centered">
+            <p className="eyebrow">Mulai dari mana?</p>
+            <h2 id="finder-title">Pilih sesuai yang paling kamu butuhkan sekarang</h2>
+            <p>Tidak perlu membeli semuanya. Mulai dari satu hal yang ingin kamu rapikan lebih dulu.</p>
+          </div>
+          <div className="finder-grid">
+            {finder.map(({need, slug}) => {
+              const p = bySlug(slug);
+              return (
+                <a key={slug} href={`#${slug}`} className="finder-card">
+                  <span className="finder-need">“{need}”</span>
+                  <span className="finder-answer">
+                    Coba <strong>{p.name}</strong>
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="section collection" id="koleksi" aria-labelledby="koleksi-title">
+          <div className="container">
+            <div className="section-heading">
+              <p className="eyebrow">Koleksi planner</p>
+              <h2 id="koleksi-title">Template siap pakai untuk hari‑harimu</h2>
+              <p>Klik warna untuk melihat setiap edisi. Semua template dibuat di Google Sheets dan bisa dibuka dari perangkat apa pun.</p>
+            </div>
+            <Collection />
+            <p className="collection-note">
+              <ShieldCheck size={16} aria-hidden="true" /> Tombol “Beli di Lynk” membuka halaman checkout resmi JadiRutin. Harga final dan promo yang berlaku mengikuti yang tertera saat checkout.
+            </p>
+          </div>
+        </section>
+
+        <section className="section container" id="keunggulan" aria-labelledby="keunggulan-title">
+          <div className="section-heading centered">
+            <p className="eyebrow">Kenapa JadiRutin</p>
+            <h2 id="keunggulan-title">Dibuat supaya kamu benar‑benar konsisten memakainya</h2>
+            <p>Planner terbaik adalah yang tetap kamu buka minggu depan. Karena itu setiap template dibuat sederhana, otomatis, dan enak dilihat.</p>
+          </div>
+          <div className="benefit-grid">
+            {benefits.map(({icon: Icon, title, text}) => (
+              <article key={title} className="benefit-card">
+                <span className="benefit-icon">
+                  <Icon size={22} aria-hidden="true" />
+                </span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="section container" id="cara-beli" aria-labelledby="cara-beli-title">
+          <div className="how">
+            <div className="section-heading">
+              <p className="eyebrow">Cara beli</p>
+              <h2 id="cara-beli-title">Tiga langkah, lalu kamu siap mulai</h2>
+              <p>Pembelian dan pembayaran dilakukan di Lynk, platform penjualan produk digital. Prosesnya hanya beberapa menit.</p>
+              <div className="secure-note">
+                <ShieldCheck size={20} aria-hidden="true" />
+                <span>Website ini tidak meminta atau menyimpan data pembayaran. Semua transaksi diproses di checkout Lynk.</span>
+              </div>
+            </div>
+            <ol className="steps">
+              {steps.map(({icon: Icon, title, text}, i) => (
+                <li key={title}>
+                  <span className="step-icon">
+                    <Icon size={20} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <span className="step-number">Langkah {i + 1}</span>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section className="section container faq" id="faq" aria-labelledby="faq-title">
+          <div className="section-heading">
+            <p className="eyebrow">FAQ</p>
+            <h2 id="faq-title">Pertanyaan yang sering ditanyakan</h2>
+            <p>Belum menemukan jawabannya? Admin kami siap membantu.</p>
+            <a href={WHATSAPP_URL} {...external} className="button button-ghost">
+              <MessageCircle size={18} /> Chat via WhatsApp
+            </a>
+          </div>
+          <div className="faq-list">
+            {faqs.map(([q, a]) => (
+              <details key={q}>
+                <summary>
+                  {q}
+                  <ChevronDown size={20} aria-hidden="true" />
+                </summary>
+                <p>{a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section className="container">
+          <div className="closing">
+            <p className="eyebrow">Progress, not perfection</p>
+            <h2>Tidak harus sempurna. Cukup mulai, lalu jadi rutin.</h2>
+            <p>Satu template, satu kebiasaan, satu hari. Mulai dari {rupiah(lowestPrice)}.</p>
+            <div className="hero-actions centered">
+              <a href="#koleksi" className="button button-primary button-lg">
+                Pilih plannerku <ArrowRight size={18} />
+              </a>
+              <a href={WHATSAPP_URL} {...external} className="button button-ghost button-lg">
+                <MessageCircle size={18} /> Tanya admin dulu
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <div className="container footer-inner">
+          <div className="footer-brand">
+            <Brand />
+            <p>Template Google Sheets untuk keuangan, kebiasaan, dan rencana harianmu.</p>
+          </div>
+          <div className="footer-col">
+            <h3>Hubungi kami</h3>
+            <a href={WHATSAPP_URL} {...external}>
+              WhatsApp {WHATSAPP_DISPLAY} <ArrowUpRight size={14} />
+            </a>
+            <a href={TIKTOK_URL} {...external}>
+              TikTok @jadirutin <ArrowUpRight size={14} />
+            </a>
+            <a href={STORE_URL} {...external}>
+              Toko resmi di Lynk <ArrowUpRight size={14} />
+            </a>
+          </div>
+          <div className="footer-col">
+            <h3>Belanja</h3>
+            <a href="#koleksi">Koleksi planner</a>
+            <a href="#cara-beli">Cara beli</a>
+            <a href="#faq">FAQ</a>
+          </div>
+        </div>
+        <div className="container footer-bottom">
+          <span>© {new Date().getFullYear()} Jadi Rutin. Semua template untuk pemakaian pribadi.</span>
+          <span>Pembayaran dan akses produk diproses melalui Lynk.</span>
+        </div>
+      </footer>
+
+      <a className="mobile-cta" href="#koleksi">
+        <span>
+          Lihat koleksi
+          <small>Mulai {rupiah(lowestPrice)}</small>
+        </span>
+        <ArrowRight size={18} />
+      </a>
+    </>
+  );
+}
