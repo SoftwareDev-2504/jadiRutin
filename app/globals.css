@@ -210,6 +210,7 @@ svg {
 .brand {
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
   gap: 8px;
   font-size: 22px;
   font-weight: 800;
@@ -838,58 +839,6 @@ tbody .sheet-name {
   font-size: 17px;
 }
 
-/* Finder */
-
-.finder-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.finder-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 24px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-}
-
-.finder-card:hover {
-  border-color: #f2c4d5;
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-.finder-need {
-  font-size: 17px;
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-.finder-answer {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--pink-text);
-  font-size: 15px;
-}
-
-.finder-answer strong {
-  font-weight: 700;
-}
-
-.finder-answer svg {
-  transition: transform 0.2s;
-}
-
-.finder-card:hover .finder-answer svg {
-  transform: translateX(4px);
-}
-
 /* Filters & products */
 
 .filters {
@@ -1104,10 +1053,11 @@ tbody .sheet-name {
 
 .swatches {
   display: flex;
-  gap: 8px;
+  gap: 12px;
 }
 
 .swatch {
+  position: relative;
   width: 32px;
   height: 32px;
   display: grid;
@@ -1122,6 +1072,14 @@ tbody .sheet-name {
 
 .swatch:active {
   transform: scale(0.88);
+}
+
+/* Area sentuh 44px walau lingkarannya 32px */
+.swatch::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
 }
 
 .swatch[aria-pressed='true'] {
@@ -1204,6 +1162,25 @@ tbody .sheet-name {
   color: var(--pink-text);
   font-size: 12px;
   font-weight: 700;
+}
+
+.ask-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 10px;
+  border-radius: 12px;
+  background: var(--sage-soft);
+  color: #446a33;
+  font-size: 14px;
+  font-weight: 650;
+  transition: background 0.2s;
+}
+
+.ask-link:hover {
+  background: #e2ecdb;
 }
 
 .collection-note {
@@ -1522,13 +1499,64 @@ html:has(.lightbox[open]) {
   overflow: hidden;
 }
 
-.lightbox img {
+.lightbox-handle {
+  display: none;
+}
+
+.lightbox-media {
+  position: relative;
+}
+
+.lightbox-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  background: #faf2f5;
+}
+
+.lightbox-track::-webkit-scrollbar {
+  display: none;
+}
+
+.lightbox-track img {
+  flex: 0 0 100%;
   width: 100%;
   height: auto;
   max-height: calc(100dvh - 150px);
   object-fit: contain;
-  background: #faf2f5;
-  animation: fade-in 0.35s ease;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.lightbox-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  display: flex;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 99px;
+  background: #ffffffd9;
+  transform: translateX(-50%);
+}
+
+.lightbox-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  box-shadow: inset 0 0 0 1px #2a21281f;
+  transition: width 0.25s;
+}
+
+.lightbox-dots .is-active {
+  width: 20px;
+}
+
+.lightbox-actions {
+  display: flex;
+  gap: 10px;
 }
 
 .lightbox-close {
@@ -1615,6 +1643,12 @@ html:has(.lightbox[open]) {
 
 .reveal-in {
   transition: opacity 0.6s ease var(--reveal-delay, 0s), transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) var(--reveal-delay, 0s);
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
 }
 
 @keyframes rise {
@@ -1705,7 +1739,6 @@ html:has(.lightbox[open]) {
   }
 
   .product-grid,
-  .finder-grid,
   .benefit-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1758,6 +1791,14 @@ html:has(.lightbox[open]) {
 
   .site-header nav a:hover {
     background: var(--blush);
+  }
+
+  .site-header {
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .site-header.is-hidden:not(:focus-within) {
+    transform: translateY(-100%);
   }
 
   .hero {
@@ -1878,10 +1919,6 @@ html:has(.lightbox[open]) {
     align-items: flex-start;
   }
 
-  .lightbox-bar .button {
-    flex: 1 1 100%;
-  }
-
   .highlights-inner > div {
     padding: 18px 10px;
   }
@@ -1913,7 +1950,6 @@ html:has(.lightbox[open]) {
   }
 
   .product-grid,
-  .finder-grid,
   .benefit-grid {
     grid-template-columns: 1fr;
   }
@@ -1921,14 +1957,6 @@ html:has(.lightbox[open]) {
   .filters {
     margin-inline: -16px;
     padding-inline: 16px;
-  }
-
-  .finder-card {
-    padding: 20px;
-  }
-
-  .finder-need {
-    font-size: 16px;
   }
 
   .benefit-card {
@@ -1989,11 +2017,112 @@ html:has(.lightbox[open]) {
     box-shadow: 0 10px 30px #2a212840;
   }
 
+  .mobile-cta {
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s, background 0.2s;
+  }
+
+  .mobile-cta.is-hidden {
+    opacity: 0;
+    transform: translateY(calc(100% + 24px));
+    pointer-events: none;
+  }
+
+  .mobile-cta.is-buy {
+    background: var(--pink);
+    box-shadow: 0 10px 30px #d93d7459;
+  }
+
   .mobile-cta small {
     display: block;
     font-size: 12px;
     font-weight: 500;
     color: #e9d9e1;
+  }
+
+  .mobile-cta.is-buy small {
+    color: #ffe3ed;
+  }
+
+  .footer-col {
+    gap: 0;
+  }
+
+  .footer-col h3 {
+    margin-bottom: 6px;
+  }
+
+  .footer-col a {
+    min-height: 44px;
+  }
+
+  .sheet-reset {
+    min-height: 40px;
+  }
+
+  /* Lightbox jadi bottom sheet */
+  .lightbox {
+    width: 100%;
+    max-height: 94dvh;
+    margin: auto 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    border-radius: 24px 24px 0 0;
+    transition: transform 0.25s ease;
+  }
+
+  .lightbox[open] {
+    animation: sheet-up 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .lightbox.is-dragging {
+    transition: none;
+  }
+
+  .lightbox.is-closing {
+    transform: translateY(100%) !important;
+  }
+
+  .lightbox.is-closing::backdrop {
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .lightbox-handle {
+    position: relative;
+    display: block;
+    height: 28px;
+    touch-action: none;
+  }
+
+  .lightbox-handle::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 40px;
+    height: 5px;
+    border-radius: 99px;
+    background: #dccdd4;
+    transform: translateX(-50%);
+  }
+
+  .lightbox-close {
+    top: 36px;
+  }
+
+  .lightbox-track {
+    touch-action: pan-x;
+  }
+
+  .lightbox-bar {
+    padding: 14px 16px 18px;
+  }
+
+  .lightbox-actions {
+    width: 100%;
+  }
+
+  .lightbox-actions .button-primary {
+    flex: 1;
   }
 }
 

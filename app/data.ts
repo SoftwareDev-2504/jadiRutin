@@ -118,7 +118,9 @@ export const colorLabel: Record<Color, string> = {Pink: 'Pink', Blue: 'Biru', Gr
 
 export const rupiah = (n: number) => 'Rp' + n.toLocaleString('id-ID');
 
-export const checkoutUrl = (v: Variant) => `${STORE_URL}/${v.id}/checkout?token=${CHECKOUT_TOKEN}`;
+export const whatsappUrl = (text: string) => `${WHATSAPP_URL}?text=${encodeURIComponent(text)}`;
+
+export const checkoutUrl =(v: Variant) => `${STORE_URL}/${v.id}/checkout?token=${CHECKOUT_TOKEN}`;
 
 export const discount = (price: number, old?: number) => (old && old > price ? Math.round((1 - price / old) * 100) : 0);
 

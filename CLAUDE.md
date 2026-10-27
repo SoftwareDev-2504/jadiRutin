@@ -25,9 +25,12 @@ Belum ada lint atau test. Untuk verifikasi, jalankan `npm run build`, lalu cek t
 
 ```
 app/data.ts                  SATU-SATUNYA sumber data: produk, link (Lynk/WA/TikTok), helper harga
-app/page.tsx                 server component: semua section + copy (finder, benefits, steps, faqs)
-app/components/Header.tsx    client: header sticky + menu mobile (Escape untuk menutup)
-app/components/Collection.tsx client: filter kategori + ProductCard (pilihan warna, crossfade, lightbox <dialog>)
+app/page.tsx                 server component: semua section + copy (benefits, steps, faqs)
+app/components/Header.tsx    client: header sticky + menu mobile (Escape untuk menutup), di HP sembunyi saat scroll ke bawah
+app/components/Collection.tsx client: filter kategori + ProductCard (pilihan warna, crossfade, tombol tanya WA,
+                             lightbox <dialog> yang di HP jadi bottom sheet: swipe ganti warna, tarik ke bawah untuk tutup)
+app/components/MobileCta.tsx client: CTA bawah khusus HP; "Lihat koleksi", lalu "Beli <produk>" setelah warna dipilih
+                             (ProductCard memanggil announcePick lewat custom event)
 app/components/SheetDemo.tsx client: demo habit tracker interaktif di hero (simulasi, berlabel "Demo")
 app/components/Reveal.tsx    client: animasi scroll-reveal (IntersectionObserver, tanpa library)
 app/components/Brand.tsx     logo tulip SVG + wordmark
@@ -39,11 +42,12 @@ public/favicon.svg           tulip
 ## Data produk (`app/data.ts`)
 
 - Ada 6 produk dengan total 14 varian. `Product = {slug, name, category, tag, description, features, price, variants}`, dan `Variant = {color, id, image, old?}`.
-- `slug` dipakai sebagai `id` kartu produk. Kartu "Mulai dari mana?" di `page.tsx` menautkan ke `#slug`, dan `Collection` otomatis mereset filter ke "Semua" saat hash cocok dengan slug.
+- `slug` dipakai sebagai `id` kartu produk. `Collection` otomatis mereset filter ke "Semua" saat hash URL cocok dengan slug.
 - `category` bertipe `'Keuangan' | 'Kebiasaan' | 'Produktivitas'`, dan `color` bertipe `'Pink' | 'Blue' | 'Green'` (label Indonesia ada di `colorLabel`, class CSS-nya `.swatch-<color>`).
 - `price` berlaku untuk semua varian, sedangkan `old` (harga coret) per varian. Badge "Hemat X%" dihitung oleh `discount()`.
 - `features` diambil dari teks "Dilengkapi dengan" di gambar produk resmi. Jangan menambahkan klaim yang tidak ada di gambar atau di Lynk.
 - Jumlah produk, jumlah warna, harga termurah, dan jumlah per kategori semuanya diturunkan dari data. Tidak ada angka hardcoded.
+- Link WhatsApp dengan pesan terisi dibuat oleh `whatsappUrl(text)`.
 - Link checkout dibuat oleh `checkoutUrl(v)` dengan `CHECKOUT_TOKEN` (base64 dari `params=%5B%5D&tickets=%5B%5D&bid_price=0&qty_prod=1&sessid=&total_price=&total_unit=`).
 - Harga disalin manual dari Lynk pada 25 Sep 2026.
 
@@ -62,6 +66,7 @@ public/favicon.svg           tulip
 
 - Token di `:root`: `--pink` (#d93d74, untuk tombol), `--pink-text` (teks pink, kontras AA), `--pink-soft` (tulip), `--blush`, `--blush-2`, `--sage` (hijau brand), `--sage-soft`, `--ink`, `--muted`, `--line`.
 - Motion: keyframes ada di bagian `/* Motion */`. Reveal hanya menyembunyikan elemen yang masih di bawah layar saat mount, jadi konten tetap tampil tanpa JS. Semua animasi dimatikan oleh `prefers-reduced-motion`.
+- Area sentuh minimal 44px (swatch memakai `::after` untuk memperluas area sentuhnya).
 - Breakpoint: 1024px (grid 2 kolom), 860px (menu mobile, hero 1 kolom), 640px (grid 1 kolom, CTA sticky `.mobile-cta`), 380px.
 - Tidak ada dark mode, Tailwind, atau CSS modules. CSS ditulis rapi per section, satu properti per baris.
 

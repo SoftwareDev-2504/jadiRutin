@@ -2,7 +2,7 @@
 
 import {useEffect} from 'react';
 
-const selector = '.section-heading, .finder-card, .product-card, .benefit-card, .steps li, .faq-list, .closing';
+const selector = '.section-heading, .product-card, .benefit-card, .steps li, .faq-list, .closing';
 
 // Animasi muncul saat di-scroll. Hanya elemen yang masih di bawah layar yang disembunyikan,
 // jadi tanpa JS (atau dengan reduced motion) semua konten tetap tampil seperti biasa.

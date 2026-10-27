@@ -18,22 +18,12 @@ import {
 import {Brand} from './components/Brand';
 import {Collection} from './components/Collection';
 import {Header} from './components/Header';
+import {MobileCta} from './components/MobileCta';
 import {Reveal} from './components/Reveal';
 import {SheetDemo} from './components/SheetDemo';
 import {STORE_URL, TIKTOK_URL, WHATSAPP_DISPLAY, WHATSAPP_URL, lowestPrice, products, rupiah, variantCount} from './data';
 
 const external = {target: '_blank', rel: 'noopener noreferrer'};
-
-const bySlug = (slug: string) => products.find((p) => p.slug === slug)!;
-
-const finder = [
-  {need: 'Gaji sering habis, tapi tidak tahu ke mana perginya.', slug: 'financial-tracker'},
-  {need: 'Ingin saldo rekening, e-wallet, dan cash tercatat rapi.', slug: 'money-planner'},
-  {need: 'Sedang menabung untuk menikah, liburan, atau dana darurat.', slug: 'saving-tracker'},
-  {need: 'Mau mulai kebiasaan baru, tapi sering berhenti di tengah jalan.', slug: '21-days-challenge'},
-  {need: 'Ingin memantau beberapa kebiasaan sekaligus.', slug: 'habit-tracker'},
-  {need: 'Agenda dan deadline sering terlewat.', slug: 'smart-monthly-planner'},
-];
 
 const benefits = [
   {icon: FileSpreadsheet, title: 'Google Sheets siap pakai', text: 'Tidak perlu software berbayar. Cukup akun Google, lalu buka lewat browser atau aplikasi Google Sheets.'},
@@ -136,28 +126,6 @@ export default function Home() {
               <strong>Sekali bayar</strong>
               <span>pakai selamanya</span>
             </div>
-          </div>
-        </section>
-
-        <section className="section container" aria-labelledby="finder-title">
-          <div className="section-heading centered">
-            <p className="eyebrow">Mulai dari mana?</p>
-            <h2 id="finder-title">Pilih sesuai yang paling kamu butuhkan sekarang</h2>
-            <p>Tidak perlu membeli semuanya. Mulai dari satu hal yang ingin kamu rapikan lebih dulu.</p>
-          </div>
-          <div className="finder-grid">
-            {finder.map(({need, slug}) => {
-              const p = bySlug(slug);
-              return (
-                <a key={slug} href={`#${slug}`} className="finder-card">
-                  <span className="finder-need">“{need}”</span>
-                  <span className="finder-answer">
-                    Coba <strong>{p.name}</strong>
-                    <ArrowRight size={16} aria-hidden="true" />
-                  </span>
-                </a>
-              );
-            })}
           </div>
         </section>
 
@@ -292,13 +260,7 @@ export default function Home() {
         </div>
       </footer>
 
-      <a className="mobile-cta" href="#koleksi">
-        <span>
-          Lihat koleksi
-          <small>Mulai {rupiah(lowestPrice)}</small>
-        </span>
-        <ArrowRight size={18} />
-      </a>
+      <MobileCta />
       <Reveal />
     </>
   );

@@ -13,6 +13,20 @@ const links = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  // Di HP header disembunyikan saat menggulir ke bawah dan muncul lagi saat menggulir ke atas.
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - last) < 8) return;
+      setHidden(y > last && y > 160);
+      last = y;
+    };
+    window.addEventListener('scroll', onScroll, {passive: true});
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -22,7 +36,7 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="site-header">
+    <header className={'site-header' + (hidden && !open ? ' is-hidden' : '')}>
       <div className="container header-inner">
         <Brand />
         <nav id="main-nav" aria-label="Navigasi utama" className={open ? 'open' : ''}>
