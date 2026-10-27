@@ -18,7 +18,9 @@ import {
 import {Brand} from './components/Brand';
 import {Collection} from './components/Collection';
 import {Header} from './components/Header';
-import {CDN, STORE_URL, TIKTOK_URL, WHATSAPP_DISPLAY, WHATSAPP_URL, lowestPrice, products, rupiah, variantCount} from './data';
+import {Reveal} from './components/Reveal';
+import {SheetDemo} from './components/SheetDemo';
+import {STORE_URL, TIKTOK_URL, WHATSAPP_DISPLAY, WHATSAPP_URL, lowestPrice, products, rupiah, variantCount} from './data';
 
 const external = {target: '_blank', rel: 'noopener noreferrer'};
 
@@ -61,9 +63,6 @@ const faqs = [
 ];
 
 export default function Home() {
-  const hero = products[0].variants[0];
-  const heroSecondary = products[1].variants[0];
-
   return (
     <>
       <a href="#koleksi" className="skip-link">
@@ -111,31 +110,11 @@ export default function Home() {
             </ul>
           </div>
 
-          <div className="hero-visual" aria-hidden="true">
-            <div className="hero-frame hero-frame-main">
-              <img src={CDN + hero.image} alt="" fetchPriority="high" width={800} height={800} />
-            </div>
-            <div className="hero-frame hero-frame-small">
-              <img src={CDN + heroSecondary.image} alt="" width={800} height={800} />
-            </div>
-            <div className="float-chip chip-top">
-              <span className="float-icon sage">
-                <FileSpreadsheet size={18} />
-              </span>
-              <span>
-                <strong>Google Sheets</strong>
-                <small>Langsung pakai</small>
-              </span>
-            </div>
-            <div className="float-chip chip-bottom">
-              <span className="float-icon pink">
-                <ChartPie size={18} />
-              </span>
-              <span>
-                <strong>Grafik otomatis</strong>
-                <small>Cukup isi datanya</small>
-              </span>
-            </div>
+          <div className="hero-visual" role="region" aria-label="Demo interaktif habit tracker">
+            <SheetDemo />
+            <p className="hero-visual-note">
+              Simulasi sederhana. Lihat tampilan template asli di <a href="#koleksi">koleksi</a>.
+            </p>
           </div>
         </section>
 
@@ -320,6 +299,7 @@ export default function Home() {
         </span>
         <ArrowRight size={18} />
       </a>
+      <Reveal />
     </>
   );
 }

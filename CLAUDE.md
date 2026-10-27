@@ -27,7 +27,9 @@ Belum ada lint atau test. Untuk verifikasi, jalankan `npm run build`, lalu cek t
 app/data.ts                  SATU-SATUNYA sumber data: produk, link (Lynk/WA/TikTok), helper harga
 app/page.tsx                 server component: semua section + copy (finder, benefits, steps, faqs)
 app/components/Header.tsx    client: header sticky + menu mobile (Escape untuk menutup)
-app/components/Collection.tsx client: filter kategori + ProductCard (pilihan warna)
+app/components/Collection.tsx client: filter kategori + ProductCard (pilihan warna, crossfade, lightbox <dialog>)
+app/components/SheetDemo.tsx client: demo habit tracker interaktif di hero (simulasi, berlabel "Demo")
+app/components/Reveal.tsx    client: animasi scroll-reveal (IntersectionObserver, tanpa library)
 app/components/Brand.tsx     logo tulip SVG + wordmark
 app/layout.tsx               metadata/OG, font Plus Jakarta Sans via next/font (var --font)
 app/globals.css              seluruh styling
@@ -41,7 +43,7 @@ public/favicon.svg           tulip
 - `category` bertipe `'Keuangan' | 'Kebiasaan' | 'Produktivitas'`, dan `color` bertipe `'Pink' | 'Blue' | 'Green'` (label Indonesia ada di `colorLabel`, class CSS-nya `.swatch-<color>`).
 - `price` berlaku untuk semua varian, sedangkan `old` (harga coret) per varian. Badge "Hemat X%" dihitung oleh `discount()`.
 - `features` diambil dari teks "Dilengkapi dengan" di gambar produk resmi. Jangan menambahkan klaim yang tidak ada di gambar atau di Lynk.
-- Jumlah produk, jumlah warna, harga termurah, jumlah per kategori, serta gambar hero (`products[0]`, `products[1]`) semuanya diturunkan dari data. Tidak ada angka hardcoded.
+- Jumlah produk, jumlah warna, harga termurah, dan jumlah per kategori semuanya diturunkan dari data. Tidak ada angka hardcoded.
 - Link checkout dibuat oleh `checkoutUrl(v)` dengan `CHECKOUT_TOKEN` (base64 dari `params=%5B%5D&tickets=%5B%5D&bid_price=0&qty_prod=1&sessid=&total_price=&total_unit=`).
 - Harga disalin manual dari Lynk pada 25 Sep 2026.
 
@@ -59,6 +61,7 @@ public/favicon.svg           tulip
 ## Styling
 
 - Token di `:root`: `--pink` (#d93d74, untuk tombol), `--pink-text` (teks pink, kontras AA), `--pink-soft` (tulip), `--blush`, `--blush-2`, `--sage` (hijau brand), `--sage-soft`, `--ink`, `--muted`, `--line`.
+- Motion: keyframes ada di bagian `/* Motion */`. Reveal hanya menyembunyikan elemen yang masih di bawah layar saat mount, jadi konten tetap tampil tanpa JS. Semua animasi dimatikan oleh `prefers-reduced-motion`.
 - Breakpoint: 1024px (grid 2 kolom), 860px (menu mobile, hero 1 kolom), 640px (grid 1 kolom, CTA sticky `.mobile-cta`), 380px.
 - Tidak ada dark mode, Tailwind, atau CSS modules. CSS ditulis rapi per section, satu properti per baris.
 
@@ -66,7 +69,7 @@ public/favicon.svg           tulip
 
 - Kode diformat biasa (2 spasi, single quote). Komentar dipakai seperlunya.
 - Pakai `<img>` biasa, bukan `next/image` (karena export statis).
-- Aksesibilitas yang perlu dijaga: `aria-pressed` pada filter dan swatch, `aria-expanded`/`aria-controls` pada menu, skip link, `aria-live` untuk jumlah hasil filter, dan `:focus-visible`.
+- Aksesibilitas yang perlu dijaga: `aria-pressed` pada filter dan swatch, `aria-expanded`/`aria-controls` pada menu, skip link, `aria-live` untuk jumlah hasil filter dan progres demo, `inert` pada demo saat overlay selesai tampil, `<dialog>` native untuk lightbox, dan `:focus-visible`.
 - Link eksternal memakai `target="_blank" rel="noopener noreferrer"`.
 
 ## Hal yang tidak di-commit
